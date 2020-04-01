@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author gaoyang
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class ZMessageOne implements Serializable {
 
-private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.INPUT)
     private Long id;

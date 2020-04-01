@@ -1,37 +1,87 @@
 package com.kakuiwong.messagecenterthanos.listen;
 
+import com.kakuiwong.messagecenterthanos.entity.ZMessageLog;
 import com.kakuiwong.messagecenterthanos.entity.ZMessageOne;
+import com.kakuiwong.messagecenterthanos.service.IZMessageLogService;
+import com.kakuiwong.messagecenterthanos.service.IZMessageOneService;
+import com.rabbitmq.client.Channel;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
 
 /**
  * @author: gaoyang
- * @Description:
+ * @Description: 消息处理
  */
-@RabbitListener()
+@Component
+@RabbitListener(queues = MessageOneListen.QUEUE)
 public class MessageOneListen extends RabbitMessageListenAbs {
 
-    //Todo
+    public final static String QUEUE = "one";
+    public final static String EXCHANGE = "one";
+    @Autowired
+    private IZMessageLogService izMessageLogService;
 
-    //幂等性,验证log
+    /**
+     * 接收任务
+     * @param zMessageOne
+     * @param channel
+     * @param message
+     * @throws IOException
+     */
+    @RabbitHandler
     @Override
-    public boolean checkIsResume(ZMessageOne zMessageOne) {
-        try {
-            //添加log
-
-        } catch (DuplicateKeyException e) {
-            //验证log是否success
-
-            return false;
-        }
-        return true;
+    public void onListen(ZMessageOne zMessageOne, Channel channel, Message message) throws IOException {
+        this.onListenHandle(zMessageOne, channel, message);
     }
 
-    //执行任务
+    /**
+     * 实际业务处理代码
+     * @param zMessageOne
+     * @return
+     */
+    @Transactional
     @Override
-    public void handleMsg(ZMessageOne zMessageOne) {
-        //如判断任务完成状态重新生成db任务并更新id,则下面log commit,否则根据事务直接提交log
+    public boolean handleMessage(ZMessageOne zMessageOne) {
+        //处理消息
+        return false;
+    }
 
-        //commit log
+    /**
+     * 设置消息日志为成功
+     * @param zMessageOne
+     * @return
+     */
+    @Transactional
+    @Override
+    public boolean commitLog(ZMessageOne zMessageOne) {
+        return izMessageLogService.updateByMessage(zMessageOne, EXCHANGE, QUEUE);
+    }
+
+    /**
+     * 根据 消息id,queue,exchange 获取日志
+     * @param zMessageOne
+     * @return
+     */
+    @Override
+    public ZMessageLog getLogByMessageIdExchangeQueue(ZMessageOne zMessageOne) {
+        return izMessageLogService.getByMessageAndQueueExchange(zMessageOne, QUEUE, EXCHANGE);
+    }
+
+    /**
+     * 新增日志
+     * @param zMessageOne
+     * @return
+     */
+    @Override
+    public boolean insertLog(ZMessageOne zMessageOne) {
+        ZMessageLog byMessageOne = ZMessageLog.createByMessageOne(zMessageOne);
+        byMessageOne.setQueue(QUEUE);
+        return izMessageLogService.save(byMessageOne);
     }
 }

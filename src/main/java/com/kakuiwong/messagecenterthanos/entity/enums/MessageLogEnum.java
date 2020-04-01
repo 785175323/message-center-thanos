@@ -5,5 +5,5 @@ package com.kakuiwong.messagecenterthanos.entity.enums;
  * @Description:
  */
 public enum MessageLogEnum {
-
+    SUCCESS, FAIL, PROCESSING;
 }

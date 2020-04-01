@@ -1,11 +1,11 @@
 package com.kakuiwong.messagecenterthanos.mapper;
 
-import com.kakuiwong.messagecenterthanos.entity.ZMessageOne;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.kakuiwong.messagecenterthanos.entity.ZMessageOne;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author gaoyang

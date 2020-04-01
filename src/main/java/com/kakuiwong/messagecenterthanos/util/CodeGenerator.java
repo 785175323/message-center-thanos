@@ -33,9 +33,9 @@ public class CodeGenerator {
         //生成代码的包名
         String parent = "com.kakuiwong.messagecenterthanos";
         //各模块包名
-        String entity = "entity" ;
-        String service = "service" ;
-        String mapper = "mapper" ;
+        String entity = "entity";
+        String service = "service";
+        String mapper = "mapper";
         String controller = "";
         //主键类型(下面是用户输入,还有自增啥的)
         IdType idType = IdType.INPUT;
